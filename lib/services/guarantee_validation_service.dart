@@ -27,41 +27,33 @@ class GuaranteeValidationService {
   factory GuaranteeValidationService() => _instance;
   GuaranteeValidationService._internal();
 
-  // Hungarian exclusion patterns
   final List<RegExp> _exclusionPatterns = [
-    // Explicit exclusions
     RegExp(r'kizárva|kizárás|nem vonatkozik|nem érvényes', caseSensitive: false),
     RegExp(r'garancia kizárva|garancia nem vonatkozik', caseSensitive: false),
     RegExp(r'garanciális javítás kizárva', caseSensitive: false),
     
-    // Product exclusions
     RegExp(r'fogyóeszközök|fogyóeszköz|fogyó alkatrészek', caseSensitive: false),
     RegExp(r'elektromos alkatrészek|elektronikai alkatrészek', caseSensitive: false),
     RegExp(r'mechanikai alkatrészek|mechanikai sérülések', caseSensitive: false),
     
-    // Damage exclusions
     RegExp(r'mechanikai sérülés|mechanikai károsodás', caseSensitive: false),
     RegExp(r'vízbe kerülés|nedvesség|rozsdásodás', caseSensitive: false),
     RegExp(r'ütés|esés|összetörés|karcolás', caseSensitive: false),
     RegExp(r'nem gyári módosítás|nem gyári beavatkozás', caseSensitive: false),
     
-    // Usage exclusions
     RegExp(r'kereskedelmi használat|professzionális használat', caseSensitive: false),
     RegExp(r'külföldi használat|külföldön történt', caseSensitive: false),
     
-    // Time exclusions
     RegExp(r'garancia lejárt|garancia időtartama lejárt', caseSensitive: false),
     RegExp(r'garancia nem érvényes|garancia érvénytelen', caseSensitive: false),
   ];
 
-  // Warning patterns (less severe than exclusions)
   final List<RegExp> _warningPatterns = [
     RegExp(r'csak eredeti alkatrészekkel|csak eredeti szervizben', caseSensitive: false),
     RegExp(r'garancia feltételei|garancia szabályai', caseSensitive: false),
     RegExp(r'karbantartás szükséges|rendszeres karbantartás', caseSensitive: false),
   ];
 
-  // Store name patterns
   final List<RegExp> _storePatterns = [
     RegExp(r'(MediaMarkt|Media Markt)', caseSensitive: false),
     RegExp(r'(IKEA)', caseSensitive: false),
@@ -75,22 +67,19 @@ class GuaranteeValidationService {
     RegExp(r'(Coop|COOP)', caseSensitive: false),
   ];
 
-  // Date patterns
   final List<RegExp> _datePatterns = [
-    RegExp(r'\d{4}\.\d{1,2}\.\d{1,2}'), // 2024.01.15
-    RegExp(r'\d{1,2}\.\d{1,2}\.\d{4}'), // 15.01.2024
-    RegExp(r'\d{1,2}/\d{1,2}/\d{4}'),   // 15/01/2024
-    RegExp(r'\d{4}-\d{1,2}-\d{1,2}'),   // 2024-01-15
+    RegExp(r'\d{4}\.\d{1,2}\.\d{1,2}'),
+    RegExp(r'\d{1,2}\.\d{1,2}\.\d{4}'),
+    RegExp(r'\d{1,2}/\d{1,2}/\d{4}'),
+    RegExp(r'\d{4}-\d{1,2}-\d{1,2}'),
   ];
 
-  /// Validate guarantee text and extract information
   Future<GuaranteeValidationResult> validateGuaranteeText(List<MockTextBlock> textBlocks) async {
     final fullText = textBlocks.map((block) => block.text).join(' ').toLowerCase();
     
     List<String> exclusions = [];
     List<String> warnings = [];
     
-    // Check for exclusions
     for (final pattern in _exclusionPatterns) {
       final matches = pattern.allMatches(fullText);
       for (final match in matches) {
@@ -98,7 +87,6 @@ class GuaranteeValidationService {
       }
     }
     
-    // Check for warnings
     for (final pattern in _warningPatterns) {
       final matches = pattern.allMatches(fullText);
       for (final match in matches) {
@@ -106,7 +94,6 @@ class GuaranteeValidationService {
       }
     }
     
-    // Extract store name
     String? storeName;
     for (final pattern in _storePatterns) {
       final match = pattern.firstMatch(fullText);
@@ -116,7 +103,6 @@ class GuaranteeValidationService {
       }
     }
     
-    // Extract dates
     String? purchaseDate;
     String? expiryDate;
     final dateMatches = <String>[];
@@ -128,7 +114,6 @@ class GuaranteeValidationService {
       }
     }
     
-    // Simple logic: first date is usually purchase, second is expiry
     if (dateMatches.isNotEmpty) {
       purchaseDate = dateMatches.first;
       if (dateMatches.length > 1) {
@@ -136,7 +121,6 @@ class GuaranteeValidationService {
       }
     }
     
-    // Extract product name (look for common product patterns)
     String? productName = _extractProductName(fullText);
     
     final isExcluded = exclusions.isNotEmpty;
@@ -154,9 +138,7 @@ class GuaranteeValidationService {
     );
   }
 
-  /// Extract product name from text
   String? _extractProductName(String text) {
-    // Look for common product patterns
     final productPatterns = [
       RegExp(r'(Samsung|Apple|iPhone|Galaxy|iPad|MacBook)', caseSensitive: false),
       RegExp(r'(LG|Sony|Panasonic|Philips)', caseSensitive: false),
@@ -174,7 +156,6 @@ class GuaranteeValidationService {
     return null;
   }
 
-  /// Get exclusion reasons in Hungarian
   List<String> getExclusionReasons(List<String> exclusions) {
     final reasons = <String>[];
     

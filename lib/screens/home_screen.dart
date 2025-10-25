@@ -25,22 +25,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadGuaranteeChecks();
-    // Auto-load dummy data if no guarantees exist
     _checkAndLoadDummyData();
   }
 
   Future<void> _checkAndLoadDummyData() async {
-    // Wait a bit for the initial load to complete
     await Future.delayed(const Duration(milliseconds: 500));
     
     try {
       final checks = await _databaseHelper.getAllGuaranteeChecks();
       if (checks.isEmpty) {
-        // No guarantees exist, load dummy data
         await _loadDummyData();
       }
     } catch (e) {
-      // If there's an error, try to load dummy data anyway
       await _loadDummyData();
     }
   }
@@ -413,7 +409,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          // Statistics card (only show if there are guarantee checks)
           if (_guaranteeChecks.isNotEmpty)
             Container(
               margin: const EdgeInsets.all(16),
@@ -452,7 +447,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          // Search bar
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
@@ -482,7 +476,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          // Guarantee checks list
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())

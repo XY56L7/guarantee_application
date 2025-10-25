@@ -19,7 +19,6 @@ class GuaranteeCheck {
     required this.createdAt,
   });
 
-  // Convert GuaranteeCheck to Map for database storage
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -33,7 +32,6 @@ class GuaranteeCheck {
     };
   }
 
-  // Create GuaranteeCheck from Map (from database)
   factory GuaranteeCheck.fromMap(Map<String, dynamic> map) {
     return GuaranteeCheck(
       id: map['id'],
@@ -47,7 +45,6 @@ class GuaranteeCheck {
     );
   }
 
-  // Copy with method for updating
   GuaranteeCheck copyWith({
     int? id,
     String? storeName,
@@ -70,13 +67,11 @@ class GuaranteeCheck {
     );
   }
 
-  // Check if guarantee is expired
   bool get isExpired {
     final expiry = DateTime.parse(expiryDate);
     return DateTime.now().isAfter(expiry);
   }
 
-  // Check if guarantee expires soon (within 30 days)
   bool get expiresSoon {
     final expiry = DateTime.parse(expiryDate);
     final thirtyDaysFromNow = DateTime.now().add(const Duration(days: 30));

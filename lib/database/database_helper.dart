@@ -43,13 +43,11 @@ class DatabaseHelper {
     ''');
   }
 
-  // Insert a new guarantee check
   Future<int> insertGuaranteeCheck(GuaranteeCheck guaranteeCheck) async {
     final db = await database;
     return await db.insert('guarantee_checks', guaranteeCheck.toMap());
   }
 
-  // Get all guarantee checks
   Future<List<GuaranteeCheck>> getAllGuaranteeChecks() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -62,7 +60,6 @@ class DatabaseHelper {
     });
   }
 
-  // Get guarantee check by ID
   Future<GuaranteeCheck?> getGuaranteeCheckById(int id) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -77,7 +74,6 @@ class DatabaseHelper {
     return null;
   }
 
-  // Update guarantee check
   Future<int> updateGuaranteeCheck(GuaranteeCheck guaranteeCheck) async {
     final db = await database;
     return await db.update(
@@ -88,14 +84,11 @@ class DatabaseHelper {
     );
   }
 
-  // Delete guarantee check
   Future<int> deleteGuaranteeCheck(int id) async {
     final db = await database;
     
-    // Get the guarantee check to delete the image file
     final guaranteeCheck = await getGuaranteeCheckById(id);
     if (guaranteeCheck != null) {
-      // Delete the image file
       final imageFile = File(guaranteeCheck.imagePath);
       if (await imageFile.exists()) {
         await imageFile.delete();
@@ -109,19 +102,16 @@ class DatabaseHelper {
     );
   }
 
-  // Get expired guarantee checks
   Future<List<GuaranteeCheck>> getExpiredGuaranteeChecks() async {
     final allChecks = await getAllGuaranteeChecks();
     return allChecks.where((check) => check.isExpired).toList();
   }
 
-  // Get guarantee checks expiring soon
   Future<List<GuaranteeCheck>> getExpiringSoonGuaranteeChecks() async {
     final allChecks = await getAllGuaranteeChecks();
     return allChecks.where((check) => check.expiresSoon).toList();
   }
 
-  // Search guarantee checks
   Future<List<GuaranteeCheck>> searchGuaranteeChecks(String query) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -136,7 +126,6 @@ class DatabaseHelper {
     });
   }
 
-  // Close database
   Future<void> close() async {
     final db = await database;
     db.close();

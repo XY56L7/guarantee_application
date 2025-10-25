@@ -5,12 +5,9 @@ class OCRService {
   factory OCRService() => _instance;
   OCRService._internal();
 
-  /// Mock OCR service - returns sample text for testing
   Future<String> extractTextFromImage(File imageFile) async {
-    // Simulate processing delay
     await Future.delayed(const Duration(seconds: 2));
     
-    // Return sample Hungarian guarantee text for testing
     return '''
 MediaMarkt Magyarország Kft.
 Garancia igazolás
@@ -31,7 +28,6 @@ Cím: 1117 Budapest, Infopark sétány 1.
 ''';
   }
 
-  /// Mock text blocks for testing
   Future<List<MockTextBlock>> extractTextBlocks(File imageFile) async {
     await Future.delayed(const Duration(seconds: 2));
     
@@ -48,11 +44,9 @@ Cím: 1117 Budapest, Infopark sétány 1.
   }
 
   void dispose() {
-    // No cleanup needed for mock service
   }
 }
 
-/// Mock text block class
 class MockTextBlock {
   final String text;
   
