@@ -4,20 +4,16 @@ description: A new Flutter Camera application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^0.1.2
-  #camera: ^0.2.3
-  camera:
-    git:
-      url: git://github.com/kmorkos/plugins.git
-      ref: camera/crash-fix
-      path: packages/camera/
-  path_provider: ^0.4.1
+  cupertino_icons: ^1.0.2
+  camera: ^0.10.5+5
+  path_provider: ^2.1.1
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

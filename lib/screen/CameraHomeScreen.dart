@@ -17,9 +17,9 @@ class CameraHomeScreen extends StatefulWidget {
 }
 
 class _CameraHomeScreenState extends State<CameraHomeScreen> {
-  String imagePath;
+  String? imagePath;
   bool _toggleCamera = false;
-  CameraController controller;
+  CameraController? controller;
 
   @override
   void initState() {
@@ -53,17 +53,17 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
       );
     }
 
-    if (!controller.value.isInitialized) {
+    if (controller == null || !controller!.value.isInitialized) {
       return Container(
       );
     }
 
     return AspectRatio(
-      aspectRatio: controller.value.aspectRatio,
+      aspectRatio: controller!.value.aspectRatio,
       child: Container(
         child: Stack(
           children: <Widget>[
-            CameraPreview(controller),
+            CameraPreview(controller!),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -100,7 +100,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
                         child: InkWell(
                           borderRadius: BorderRadius.all(Radius.circular(50.0)),
                           onTap: () {
-                            if (!_toggleCamera) {
+                            if (!_toggleCamera && widget.cameras.length > 1) {
                               onCameraSelected(widget.cameras[1]);
                               setState(() {
                                 _toggleCamera = true;
@@ -137,18 +137,18 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   }
 
   void onCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) await controller.dispose();
+    if (controller != null) await controller!.dispose();
     controller = CameraController(cameraDescription, ResolutionPreset.medium);
 
-    controller.addListener(() {
+    controller!.addListener(() {
       if (mounted) setState(() {});
-      if (controller.value.hasError) {
-        showMessage('Camera Error: ${controller.value.errorDescription}');
+      if (controller!.value.hasError) {
+        showMessage('Camera Error: ${controller!.value.errorDescription}');
       }
     });
 
     try {
-      await controller.initialize();
+      await controller!.initialize();
     } on CameraException catch (e) {
       showException(e);
     }
@@ -159,7 +159,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   String timestamp() => new DateTime.now().millisecondsSinceEpoch.toString();
 
   void _captureImage() {
-    takePicture().then((String filePath) {
+    takePicture().then((String? filePath) {
       if (mounted) {
         setState(() {
           imagePath = filePath;
@@ -176,23 +176,23 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
     Navigator.pop(context, imagePath);
   }
 
-  Future<String> takePicture() async {
-    if (!controller.value.isInitialized) {
+  Future<String?> takePicture() async {
+    if (controller == null || !controller!.value.isInitialized) {
       showMessage('Error: select a camera first.');
       return null;
     }
     final Directory extDir = await getApplicationDocumentsDirectory();
     final String dirPath = '${extDir.path}/FlutterDevs/Camera/Images';
-    await new Directory(dirPath).create(recursive: true);
+    await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${timestamp()}.jpg';
 
-    if (controller.value.isTakingPicture) {
+    if (controller!.value.isTakingPicture) {
       // A capture is already pending, do nothing.
       return null;
     }
 
     try {
-      await controller.takePicture(filePath);
+      await controller!.takePicture();
     } on CameraException catch (e) {
       showException(e);
       return null;
@@ -201,8 +201,8 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   }
 
   void showException(CameraException e) {
-    logError(e.code, e.description);
-    showMessage('Error: ${e.code}\n${e.description}');
+    logError(e.code, e.description ?? 'Unknown error');
+    showMessage('Error: ${e.code}\n${e.description ?? 'Unknown error'}');
   }
 
   void showMessage(String message) {

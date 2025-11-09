@@ -14,8 +14,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _imagePath;
-  Widget image;
+  String? _imagePath;
+  Widget? image;
   double _headerHeight = 320.0;
   final String _assetImagePath = 'assets/images/ic_no_image.png';
 
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Stack(
       children: <Widget>[
         _imagePath != null
-            ? _getImageFromFile(_imagePath)
+            ? _getImageFromFile(_imagePath!)
             : _getImageFromAsset(),
         _getCameraFab(),
         _getLogo(),
@@ -146,14 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final imagePath = await Navigator.of(context).pushNamed(CAMERA_SCREEN);
 
     setState(() {
-      _imagePath = imagePath;
+      _imagePath = imagePath as String?;
     });
 
     if (imagePath != null) {
       print("$imagePath");
 
       image = Image.file(
-        File(imagePath),
+        File(imagePath as String),
         height: _headerHeight,
         width: double.infinity,
         fit: BoxFit.cover,

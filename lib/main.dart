@@ -6,13 +6,15 @@ import 'package:flutter_camera_app/constant/Constant.dart';
 import 'package:flutter_camera_app/screen/CameraHomeScreen.dart';
 import 'package:flutter_camera_app/screen/HomeScreen.dart';
 import 'package:flutter_camera_app/screen/SplashScreen.dart';
+import 'package:flutter_camera_app/screen/LoginScreen.dart';
+import 'package:flutter_camera_app/screen/SignUpScreen.dart';
 
-List<CameraDescription> cameras;
+List<CameraDescription>? cameras;
 
-Future<Null> main() async {
+Future<void> main() async {
   try {
     cameras = await availableCameras();
-  } on CameraException catch (e) {
+  } on CameraException {
     //logError(e.code, e.description);
   }
 
@@ -25,8 +27,10 @@ Future<Null> main() async {
       ),
       home: SplashScreen(),
       routes: <String, WidgetBuilder>{
+        LOGIN_SCREEN: (BuildContext context) => LoginScreen(),
+        SIGNUP_SCREEN: (BuildContext context) => SignUpScreen(),
         HOME_SCREEN: (BuildContext context) => HomeScreen(),
-        CAMERA_SCREEN: (BuildContext context) => CameraHomeScreen(cameras),
+        CAMERA_SCREEN: (BuildContext context) => CameraHomeScreen(cameras ?? []),
       },
     ),
   );
