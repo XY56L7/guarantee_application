@@ -1,22 +1,56 @@
-# Flutter Camera Demo
+# Application
 
-A Flutter app to showcase Camera View.
+Ez a projekt egy full-stack alkalmazás, amely Flutter frontend-et és Node.js backend-et tartalmaz.
 
-# Demo
-<img height="480px" src="https://github.com/flutter-devs/flutter_camera_demo/blob/master/screens/demo.gif">
+## Projekt Struktúra
 
+```
+Application/
+├── frontend/
+│   └── flutter_camera_demo/    # Flutter frontend alkalmazás
+├── backend/                     # Node.js backend API
+│   ├── index.js
+│   ├── package.json
+│   └── node_modules/
+└── README.md
+```
 
+## Frontend
 
-# Android Screen
-<img height="480px" src="https://github.com/flutter-devs/flutter_camera_demo/blob/master/screens/android1.jpg"> <img height="480px" src="https://github.com/flutter-devs/flutter_camera_demo/blob/master/screens/android2.jpg"> 
+A frontend egy Flutter alkalmazás, amely a `frontend/flutter_camera_demo/` mappában található.
 
+### Futtatás
 
-# iOS Screen
-<img height="480px" src="https://github.com/flutter-devs/flutter_camera_demo/blob/master/screens/iphone1.jpg"> <img height="480px" src="https://github.com/flutter-devs/flutter_camera_demo/blob/master/screens/iphone2.jpg"> <img height="480px" src="https://github.com/flutter-devs/flutter_camera_demo/blob/master/screens/iphone3.jpg">
+```bash
+cd frontend/flutter_camera_demo
+flutter run
+```
 
+## Backend
 
+A backend egy Node.js Express API, amely a `backend/` mappában található.
 
-## Getting Started
+### Telepítés
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+```bash
+cd backend
+npm install
+```
+
+### Futtatás
+
+```bash
+npm start
+```
+
+A szerver alapértelmezés szerint a `http://localhost:3000` címen fut.
+
+### API Endpoints
+
+- `GET /` - Főoldal
+- `GET /api/health` - Health check endpoint
+
+## Fejlesztés
+
+A projekt monorepo struktúrában van szervezve, ahol a frontend és backend külön mappákban találhatóak.
+
