@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,6 +30,7 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
   final GuaranteeValidationService _validationService = GuaranteeValidationService();
   
   File? _selectedImage;
+  Uint8List? _selectedImageBytes; // Web platformon használjuk
   DateTime? _purchaseDate;
   DateTime? _expiryDate;
   bool _isLoading = false;
@@ -54,7 +57,18 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
 
       if (image != null) {
         setState(() {
-          _selectedImage = File(image.path);
+          if (kIsWeb) {
+            // Web platformon bytes-ot tárolunk
+            image.readAsBytes().then((bytes) {
+              setState(() {
+                _selectedImageBytes = bytes;
+              });
+            });
+            _selectedImage = null;
+          } else {
+            _selectedImage = File(image.path);
+            _selectedImageBytes = null;
+          }
           _extractedText = null;
           _validationResult = null;
         });
@@ -220,6 +234,11 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
 
   Future<String> _saveImageToAppDirectory(File imageFile) async {
     try {
+      if (kIsWeb) {
+        // Web platformon nem mentünk fájlt, csak egy placeholder path-et használunk
+        // A kép valójában memóriában marad vagy base64 stringként tárolható
+        return 'web_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      }
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String fileName = 'guarantee_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final String filePath = path.join(appDir.path, 'guarantee_images', fileName);
@@ -363,7 +382,7 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
-                      if (_selectedImage != null)
+                      if (_selectedImage != null || _selectedImageBytes != null)
                         Stack(
                           children: [
                             Container(
@@ -375,10 +394,17 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  _selectedImage!,
-                                  fit: BoxFit.cover,
-                                ),
+                                child: kIsWeb && _selectedImageBytes != null
+                                    ? Image.memory(
+                                        _selectedImageBytes!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : _selectedImage != null
+                                        ? Image.file(
+                                            _selectedImage!,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const SizedBox(),
                               ),
                             ),
                             if (_isProcessingOCR)

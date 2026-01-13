@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import '../models/guarantee_check.dart';
 
@@ -107,21 +108,41 @@ class ViewGuaranteeCheckScreen extends StatelessWidget {
                         constraints: const BoxConstraints(maxHeight: 400),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(guaranteeCheck.imagePath),
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 200,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.error, size: 50, color: Colors.grey),
-                                    SizedBox(height: 8),
+                          child: kIsWeb
+                              ? Container(
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.image, size: 50, color: Colors.grey),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'Kép megjelenítése weben\nnem támogatott',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Image.file(
+                                  File(guaranteeCheck.imagePath),
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.error, size: 50, color: Colors.grey),
+                                          SizedBox(height: 8),
                                     Text('Nem sikerült betölteni a képet'),
                                   ],
                                 ),

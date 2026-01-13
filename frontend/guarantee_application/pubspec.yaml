@@ -50,6 +50,9 @@ dependencies:
   http: ^1.2.0
   flutter_secure_storage: ^9.0.0
   
+  # Web storage
+  shared_preferences: ^2.2.2
+  
   # OCR for text recognition (temporarily disabled due to build issues)
   # google_mlkit_text_recognition: ^0.15.0
 
