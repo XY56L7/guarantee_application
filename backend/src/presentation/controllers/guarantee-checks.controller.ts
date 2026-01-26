@@ -15,14 +15,14 @@ import {
   UpdateGuaranteeCheckDto,
   GuaranteeCheckResponseDto,
   GuaranteeCheckStatsDto,
-} from '../application/dto/guarantee-check.dto';
-import { CreateGuaranteeCheckUseCase } from '../application/use-cases/guarantee-check/create-guarantee-check.use-case';
-import { GetGuaranteeChecksUseCase } from '../application/use-cases/guarantee-check/get-guarantee-checks.use-case';
-import { GetGuaranteeCheckByIdUseCase } from '../application/use-cases/guarantee-check/get-guarantee-check-by-id.use-case';
-import { UpdateGuaranteeCheckUseCase } from '../application/use-cases/guarantee-check/update-guarantee-check.use-case';
-import { DeleteGuaranteeCheckUseCase } from '../application/use-cases/guarantee-check/delete-guarantee-check.use-case';
-import { GetGuaranteeCheckStatsUseCase } from '../application/use-cases/guarantee-check/get-guarantee-check-stats.use-case';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+} from '../../application/dto/guarantee-check.dto';
+import { CreateGuaranteeCheckUseCase } from '../../application/use-cases/guarantee-check/create-guarantee-check.use-case';
+import { GetGuaranteeChecksUseCase } from '../../application/use-cases/guarantee-check/get-guarantee-checks.use-case';
+import { GetGuaranteeCheckByIdUseCase } from '../../application/use-cases/guarantee-check/get-guarantee-check-by-id.use-case';
+import { UpdateGuaranteeCheckUseCase } from '../../application/use-cases/guarantee-check/update-guarantee-check.use-case';
+import { DeleteGuaranteeCheckUseCase } from '../../application/use-cases/guarantee-check/delete-guarantee-check.use-case';
+import { GetGuaranteeCheckStatsUseCase } from '../../application/use-cases/guarantee-check/get-guarantee-check-stats.use-case';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
 
 @Controller('api/guarantee-checks')
 @UseGuards(JwtAuthGuard)

@@ -6,10 +6,10 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { UpdateProfileDto, UserResponseDto } from '../application/dto/user.dto';
-import { GetProfileUseCase } from '../application/use-cases/user/get-profile.use-case';
-import { UpdateProfileUseCase } from '../application/use-cases/user/update-profile.use-case';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UpdateProfileDto, UserResponseDto } from '../../application/dto/user.dto';
+import { GetProfileUseCase } from '../../application/use-cases/user/get-profile.use-case';
+import { UpdateProfileUseCase } from '../../application/use-cases/user/update-profile.use-case';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
 
 @Controller('api/users')
 @UseGuards(JwtAuthGuard)

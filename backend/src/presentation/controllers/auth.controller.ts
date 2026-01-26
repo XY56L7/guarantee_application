@@ -6,10 +6,10 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { SignupDto, LoginDto, AuthResponseDto } from '../application/dto/auth.dto';
-import { SignupUseCase } from '../application/use-cases/auth/signup.use-case';
-import { LoginUseCase } from '../application/use-cases/auth/login.use-case';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { SignupDto, LoginDto, AuthResponseDto } from '../../application/dto/auth.dto';
+import { SignupUseCase } from '../../application/use-cases/auth/signup.use-case';
+import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
