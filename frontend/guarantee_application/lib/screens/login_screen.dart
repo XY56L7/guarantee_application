@@ -36,13 +36,31 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       if (result['success'] == true) {
-        Navigator.pushReplacementNamed(context, '/main');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Welcome, ${result['user']['name']}!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        await Future.delayed(const Duration(milliseconds: 200));
+        
+        final isLoggedIn = await ApiService.isLoggedIn();
+        
+        if (!mounted) return;
+        
+        if (isLoggedIn) {
+          Navigator.pushReplacementNamed(context, '/main').then((_) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Welcome, ${result['user']['name']}!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login successful but token could not be saved. Please try again.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

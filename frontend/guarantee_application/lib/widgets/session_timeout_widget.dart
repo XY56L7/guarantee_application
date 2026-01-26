@@ -20,8 +20,11 @@ class SessionTimeoutWidget extends StatefulWidget {
 
 class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
   Timer? _timer;
-  int _remainingSeconds = 0;
-  bool _showWarning = false;
+  final ValueNotifier<int> _remainingSecondsNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<bool> _showWarningNotifier = ValueNotifier<bool>(false);
+  
+  int get _remainingSeconds => _remainingSecondsNotifier.value;
+  bool get _showWarning => _showWarningNotifier.value;
 
   @override
   void initState() {
@@ -31,20 +34,32 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
 
   void _resetTimer() {
     _timer?.cancel();
-    setState(() {
-      _remainingSeconds = widget.timeoutDuration.inSeconds;
-      _showWarning = false;
-    });
+    _remainingSecondsNotifier.value = widget.timeoutDuration.inSeconds;
+    _showWarningNotifier.value = false;
     _startTimer();
   }
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0) {
-        setState(() {
-          _remainingSeconds--;
-          _showWarning = _remainingSeconds <= 60;
-        });
+      final currentSeconds = _remainingSecondsNotifier.value;
+      if (currentSeconds > 0) {
+        final newRemainingSeconds = currentSeconds - 1;
+        final newShowWarning = newRemainingSeconds <= 60;
+        
+        // Csak akkor frissítünk, ha a warning állapot változott, 
+        // vagy ha 10 másodpercenként van (a teljesítmény javítása érdekében)
+        // Az utolsó percben (60 másodperc) mindig frissítünk
+        final shouldUpdate = newShowWarning != _showWarningNotifier.value || 
+                            (newRemainingSeconds > 60 && newRemainingSeconds % 10 == 0) ||
+                            newRemainingSeconds <= 60;
+        
+        if (shouldUpdate) {
+          _remainingSecondsNotifier.value = newRemainingSeconds;
+          _showWarningNotifier.value = newShowWarning;
+        } else {
+          // Frissítjük a változókat értesítés nélkül (csak a belső állapot)
+          _remainingSecondsNotifier.value = newRemainingSeconds;
+        }
       } else {
         _handleTimeout();
       }
@@ -63,10 +78,10 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
-  Color _getTimerColor() {
-    if (_remainingSeconds <= 60) {
+  Color _getTimerColor(int seconds) {
+    if (seconds <= 60) {
       return Colors.red;
-    } else if (_remainingSeconds <= 300) {
+    } else if (seconds <= 300) {
       return Colors.orange;
     }
     return Colors.grey;
@@ -85,38 +100,50 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
             top: 8,
             left: 16,
             child: SafeArea(
-              child: AnimatedOpacity(
-                opacity: _showWarning ? 1.0 : 0.7,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(
-                      color: _getTimerColor(),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _showWarning ? Icons.warning : Icons.timer,
-                        color: _getTimerColor(),
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _formatTime(_remainingSeconds),
-                        style: TextStyle(
-                          color: _getTimerColor(),
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              child: RepaintBoundary(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _showWarningNotifier,
+                  builder: (context, showWarning, _) {
+                    return ValueListenableBuilder<int>(
+                      valueListenable: _remainingSecondsNotifier,
+                      builder: (context, remainingSeconds, _) {
+                        return AnimatedOpacity(
+                          opacity: showWarning ? 1.0 : 0.7,
+                          duration: const Duration(milliseconds: 300),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(
+                                color: _getTimerColor(remainingSeconds),
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  showWarning ? Icons.warning : Icons.timer,
+                                  color: _getTimerColor(remainingSeconds),
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _formatTime(remainingSeconds),
+                                  style: TextStyle(
+                                    color: _getTimerColor(remainingSeconds),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ),
@@ -129,6 +156,8 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
   @override
   void dispose() {
     _timer?.cancel();
+    _remainingSecondsNotifier.dispose();
+    _showWarningNotifier.dispose();
     super.dispose();
   }
 }
