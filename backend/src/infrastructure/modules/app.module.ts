@@ -21,7 +21,7 @@ import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { InMemoryDatabase } from '../../persistence/database/in-memory.database';
 import { SeedService } from '../../persistence/seed/seed.service';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 
@@ -34,12 +34,15 @@ import { ConfigService } from '@nestjs/config';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your-secret-key',
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '1h',
-        },
-      }),
+      useFactory: async (configService: ConfigService): Promise<JwtModuleOptions> => {
+        const expiresIn = configService.get<string>('JWT_EXPIRES_IN') || '1h';
+        return {
+          secret: configService.get<string>('JWT_SECRET') || 'your-secret-key',
+          signOptions: {
+            expiresIn: expiresIn as any,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
