@@ -4,23 +4,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:js/js.dart';
-
-@JS('window.localStorage')
-external Storage get _localStorage;
-
-@JS()
-@anonymous
-class Storage {
-  external String? getItem(String key);
-  external void setItem(String key, String value);
-  external void removeItem(String key);
-  external void clear();
-}
+import 'web_storage_stub.dart' if (dart.library.html) 'web_storage.dart';
 
 class ApiService {
   static const storage = FlutterSecureStorage();
   static SharedPreferences? _prefs;
+  static final WebStorage _webStorage = WebStorage();
   
   static String get baseUrl {
     if (kIsWeb) {
@@ -46,9 +35,9 @@ class ApiService {
   static Future<bool> _writeToken(String key, String value) async {
     if (kIsWeb) {
       try {
-        _localStorage.setItem(key, value);
+        _webStorage[key] = value;
         await Future.delayed(const Duration(milliseconds: 50));
-        final savedValue = _localStorage.getItem(key) as String?;
+        final savedValue = _webStorage[key];
         final isSaved = savedValue == value;
         return isSaved;
       } catch (e) {
@@ -75,7 +64,7 @@ class ApiService {
   static Future<String?> _readToken(String key) async {
     if (kIsWeb) {
       try {
-        final value = _localStorage.getItem(key) as String?;
+        final value = _webStorage[key];
         return value;
       } catch (e) {
         try {
@@ -93,7 +82,7 @@ class ApiService {
   static Future<void> _deleteToken(String key) async {
     if (kIsWeb) {
       try {
-        _localStorage.removeItem(key);
+        _webStorage.remove(key);
       } catch (e) {
         try {
           await _initPrefs();
@@ -232,7 +221,7 @@ class ApiService {
   static Future<void> logout() async {
     if (kIsWeb) {
       try {
-        _localStorage.clear();
+        _webStorage.clear();
       } catch (e) {
         try {
           await _initPrefs();
