@@ -1,0 +1,16 @@
+.git
+.gitignore
+*.md
+build
+.dart_tool
+.pub-cache
+.pub
+coverage
+.vscode
+.idea
+*.iml
+*.log
+.DS_Store
+test
+*.g.dart
+*.freezed.dart
