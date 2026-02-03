@@ -22,9 +22,6 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
   Timer? _timer;
   final ValueNotifier<int> _remainingSecondsNotifier = ValueNotifier<int>(0);
   final ValueNotifier<bool> _showWarningNotifier = ValueNotifier<bool>(false);
-  
-  int get _remainingSeconds => _remainingSecondsNotifier.value;
-  bool get _showWarning => _showWarningNotifier.value;
 
   @override
   void initState() {

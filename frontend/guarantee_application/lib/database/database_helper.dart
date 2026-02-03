@@ -31,13 +31,13 @@ class DatabaseHelper {
     try {
       _database = await _initDatabase();
       return _database!;
-    } on MissingPluginException catch (e) {
+    } on MissingPluginException {
       // Web platformon ez a hiba jelentkezik, ha valamiért mégis meghívódna
       if (kIsWeb) {
         return null;
       }
       rethrow;
-    } catch (e) {
+    } catch (_) {
       // Ha weben valamiért mégis meghívódna
       if (kIsWeb) {
         return null;
@@ -60,7 +60,7 @@ class DatabaseHelper {
         version: 1,
         onCreate: _onCreate,
       );
-    } on MissingPluginException catch (e) {
+    } on MissingPluginException {
       // Web platformon ez a hiba jelentkezik
       if (kIsWeb) {
         throw UnsupportedError('SQLite nem támogatott web platformon');

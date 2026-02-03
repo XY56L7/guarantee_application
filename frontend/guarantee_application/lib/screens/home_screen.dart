@@ -192,20 +192,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final expiresSoon = check.expiresSoon;
 
     Color statusColor;
-    String statusText;
     IconData statusIcon;
 
     if (isExpired) {
       statusColor = Colors.red;
-      statusText = 'Lejárt';
       statusIcon = Icons.warning;
     } else if (expiresSoon) {
       statusColor = Colors.orange;
-      statusText = 'Hamarosan lejár';
       statusIcon = Icons.schedule;
     } else {
       statusColor = Colors.green;
-      statusText = 'Érvényes';
       statusIcon = Icons.check_circle;
     }
 

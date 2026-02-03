@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
           CircleAvatar(
             radius: 60,
-            backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
             child: Icon(
               Icons.person,
               size: 60,
@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       elevation: 2,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withValues(alpha: 0.2),
+          backgroundColor: color.withOpacity(0.2),
           child: Icon(icon, color: color),
         ),
         title: Text(

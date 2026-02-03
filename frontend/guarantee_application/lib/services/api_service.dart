@@ -26,7 +26,8 @@ class ApiService {
       if (_prefs == null) {
         try {
           _prefs = await SharedPreferences.getInstance();
-        } catch (e) {
+        } catch (_) {
+          // Use in-memory fallback if SharedPreferences unavailable
         }
       }
     }
@@ -40,14 +41,15 @@ class ApiService {
         final savedValue = _webStorage[key];
         final isSaved = savedValue == value;
         return isSaved;
-      } catch (e) {
+      } catch (_) {
         try {
           await _initPrefs();
           if (_prefs != null) {
             await _prefs!.setString(key, value);
             return true;
           }
-        } catch (e2) {
+        } catch (_) {
+          // Ignore prefs init failure
         }
         return false;
       }
@@ -55,7 +57,7 @@ class ApiService {
       try {
         await storage.write(key: key, value: value);
         return true;
-      } catch (e) {
+      } catch (_) {
         return false;
       }
     }
@@ -66,11 +68,11 @@ class ApiService {
       try {
         final value = _webStorage[key];
         return value;
-      } catch (e) {
+      } catch (_) {
         try {
           await _initPrefs();
           return _prefs?.getString(key);
-        } catch (e2) {
+        } catch (_) {
           return null;
         }
       }
@@ -79,15 +81,17 @@ class ApiService {
     }
   }
 
+  // ignore: unused_element - kept for token cleanup API
   static Future<void> _deleteToken(String key) async {
     if (kIsWeb) {
       try {
         _webStorage.remove(key);
-      } catch (e) {
+      } catch (_) {
         try {
           await _initPrefs();
           await _prefs?.remove(key);
-        } catch (e2) {
+        } catch (_) {
+          // Ignore prefs failure
         }
       }
     } else {
@@ -222,11 +226,12 @@ class ApiService {
     if (kIsWeb) {
       try {
         _webStorage.clear();
-      } catch (e) {
+      } catch (_) {
         try {
           await _initPrefs();
           await _prefs?.clear();
-        } catch (e2) {
+        } catch (_) {
+          // Ignore prefs failure
         }
       }
     } else {
