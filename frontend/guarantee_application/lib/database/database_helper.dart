@@ -201,10 +201,10 @@ class DatabaseHelper {
         if (await imageFile.exists()) {
           await imageFile.delete();
         }
-      } catch (e) {
+      } catch (_) {
+        // ignore: empty_catches
       }
     }
-    
     return await db!.delete(
       'guarantee_checks',
       where: 'id = ?',
