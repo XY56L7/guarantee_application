@@ -29,7 +29,7 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
   final GuaranteeValidationService _validationService = GuaranteeValidationService();
   
   File? _selectedImage;
-  Uint8List? _selectedImageBytes; // Web platformon használjuk
+  Uint8List? _selectedImageBytes;
   DateTime? _purchaseDate;
   DateTime? _expiryDate;
   bool _isLoading = false;
@@ -57,7 +57,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
       if (image != null) {
         setState(() {
           if (kIsWeb) {
-            // Web platformon bytes-ot tárolunk
             image.readAsBytes().then((bytes) {
               setState(() {
                 _selectedImageBytes = bytes;
@@ -71,8 +70,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
           _extractedText = null;
           _validationResult = null;
         });
-        
-        // Process OCR automatically
         await _processOCR();
       }
     } catch (e) {
@@ -92,13 +89,8 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
     });
 
     try {
-      // Extract text blocks
       final textBlocks = await _ocrService.extractTextBlocks(_selectedImage!);
-      
-      // Extract full text
       final fullText = await _ocrService.extractTextFromImage(_selectedImage!);
-      
-      // Validate guarantee
       final validationResult = await _validationService.validateGuaranteeText(textBlocks);
       
       setState(() {
@@ -106,13 +98,9 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
         _validationResult = validationResult;
         _isProcessingOCR = false;
       });
-
-      // Auto-fill form fields if validation was successful
       if (validationResult.isValid) {
         _autoFillForm(validationResult);
       }
-
-      // Show warnings or exclusions
       if (validationResult.isExcluded) {
         _showExclusionDialog(validationResult);
       } else if (validationResult.warnings.isNotEmpty) {
@@ -139,7 +127,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
     if (result.extractedProductName != null) {
       _productNameController.text = result.extractedProductName!;
     }
-    // Note: Dates would need more complex parsing to convert to DateTime
   }
 
   void _showExclusionDialog(GuaranteeValidationResult result) {
@@ -234,21 +221,15 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
   Future<String> _saveImageToAppDirectory(File imageFile) async {
     try {
       if (kIsWeb) {
-        // Web platformon nem mentünk fájlt, csak egy placeholder path-et használunk
-        // A kép valójában memóriában marad vagy base64 stringként tárolható
         return 'web_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
       }
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String fileName = 'guarantee_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final String filePath = path.join(appDir.path, 'guarantee_images', fileName);
-      
-      // Create directory if it doesn't exist
       final Directory imageDir = Directory(path.dirname(filePath));
       if (!await imageDir.exists()) {
         await imageDir.create(recursive: true);
       }
-      
-      // Copy the image to the app directory
       final File savedImage = await imageFile.copy(filePath);
       return savedImage.path;
     } catch (e) {
@@ -301,10 +282,7 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
     });
 
     try {
-      // Save image to app directory
       final String imagePath = await _saveImageToAppDirectory(_selectedImage!);
-
-      // Create guarantee check object
       final guaranteeCheck = GuaranteeCheck(
         storeName: _storeNameController.text.trim(),
         productName: _productNameController.text.trim(),
@@ -314,8 +292,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
         createdAt: DateTime.now(),
       );
-
-      // Save to database
       await _databaseHelper.insertGuaranteeCheck(guaranteeCheck);
 
       if (mounted) {
@@ -370,7 +346,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Image picker section
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -522,8 +497,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // OCR Results Section
               if (_extractedText != null)
                 Card(
                   color: _validationResult?.isExcluded == true 
@@ -593,8 +566,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-
-              // Store name field
               TextFormField(
                 controller: _storeNameController,
                 decoration: const InputDecoration(
@@ -610,8 +581,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                 },
               ),
               const SizedBox(height: 16),
-
-              // Product name field
               TextFormField(
                 controller: _productNameController,
                 decoration: const InputDecoration(
@@ -627,8 +596,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                 },
               ),
               const SizedBox(height: 16),
-
-              // Purchase date field
               InkWell(
                 onTap: () => _selectDate(context, true),
                 child: InputDecorator(
@@ -648,8 +615,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Expiry date field
               InkWell(
                 onTap: () => _selectDate(context, false),
                 child: InputDecorator(
@@ -669,8 +634,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Notes field
               TextFormField(
                 controller: _notesController,
                 decoration: const InputDecoration(
@@ -681,8 +644,6 @@ class _AddGuaranteeCheckScreenState extends State<AddGuaranteeCheckScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 24),
-
-              // Save button
               ElevatedButton(
                 onPressed: _isLoading ? null : _saveGuaranteeCheck,
                 style: ElevatedButton.styleFrom(

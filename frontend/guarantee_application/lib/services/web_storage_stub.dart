@@ -1,4 +1,3 @@
-// Stub file for non-web platforms
 class WebStorage {
   String? operator [](String key) => null;
   void operator []=(String key, String value) {}

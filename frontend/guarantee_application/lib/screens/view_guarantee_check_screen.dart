@@ -54,7 +54,6 @@ class ViewGuaranteeCheckScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Status card
             Card(
               color: statusColor.withOpacity(0.1),
               child: Padding(
@@ -90,8 +89,6 @@ class ViewGuaranteeCheckScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Image section
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -157,8 +154,6 @@ class ViewGuaranteeCheckScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Details section
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -182,8 +177,6 @@ class ViewGuaranteeCheckScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Days remaining/overdue
             Card(
               color: isExpired ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
               child: Padding(
@@ -254,8 +247,6 @@ class ViewGuaranteeCheckScreen extends StatelessWidget {
   }
 
   void _shareGuaranteeCheck(BuildContext context) {
-    // This would implement sharing functionality
-    // For now, just show a snackbar
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Megosztás funkció hamarosan elérhető')),
     );

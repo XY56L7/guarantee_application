@@ -5,9 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import '../models/guarantee_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Importáljuk, de weben soha ne hívjuk meg
-// A plugin regisztráció során mégis meghívódhat, ezért try-catch blokkba tesszük
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,14 +14,12 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  // Web platformon SharedPreferences-t használunk
   static SharedPreferences? _prefs;
   static const String _storageKey = 'guarantee_checks';
   static int _nextId = 1;
 
   Future<Database?> get database async {
     if (kIsWeb) {
-      // Web platformon nem használunk SQLite-et
       return null;
     }
     if (_database != null) return _database!;
@@ -32,13 +27,11 @@ class DatabaseHelper {
       _database = await _initDatabase();
       return _database!;
     } on MissingPluginException {
-      // Web platformon ez a hiba jelentkezik, ha valamiért mégis meghívódna
       if (kIsWeb) {
         return null;
       }
       rethrow;
     } catch (_) {
-      // Ha weben valamiért mégis meghívódna
       if (kIsWeb) {
         return null;
       }
@@ -51,7 +44,6 @@ class DatabaseHelper {
       throw UnsupportedError('SQLite nem támogatott web platformon');
     }
     try {
-      // Csak mobil platformon hívjuk meg - weben soha nem ér ide
       final documentsDirectory = await getApplicationDocumentsDirectory();
       final String dbPath = join(documentsDirectory.path, 'guarantee_checks.db');
       
@@ -61,7 +53,6 @@ class DatabaseHelper {
         onCreate: _onCreate,
       );
     } on MissingPluginException {
-      // Web platformon ez a hiba jelentkezik
       if (kIsWeb) {
         throw UnsupportedError('SQLite nem támogatott web platformon');
       }
@@ -211,7 +202,6 @@ class DatabaseHelper {
           await imageFile.delete();
         }
       } catch (e) {
-        // Ignore file deletion errors
       }
     }
     

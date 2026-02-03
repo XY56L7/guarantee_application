@@ -23,7 +23,6 @@ module.exports = [
       ],
     },
   },
-  // Jest globals for *.spec.ts
   {
     files: ['**/*.spec.ts'],
     languageOptions: {

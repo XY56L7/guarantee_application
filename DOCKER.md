@@ -39,10 +39,8 @@ docker compose up
 **Rebuild and run only one service:**
 
 ```bash
-# Backend only
 docker compose up --build backend
 
-# Frontend only
 docker compose up --build frontend
 ```
 

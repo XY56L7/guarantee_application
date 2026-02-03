@@ -27,7 +27,6 @@ class ApiService {
         try {
           _prefs = await SharedPreferences.getInstance();
         } catch (_) {
-          // Use in-memory fallback if SharedPreferences unavailable
         }
       }
     }
@@ -49,7 +48,6 @@ class ApiService {
             return true;
           }
         } catch (_) {
-          // Ignore prefs init failure
         }
         return false;
       }
@@ -81,7 +79,7 @@ class ApiService {
     }
   }
 
-  // ignore: unused_element - kept for token cleanup API
+  // ignore: unused_element
   static Future<void> _deleteToken(String key) async {
     if (kIsWeb) {
       try {
@@ -91,7 +89,6 @@ class ApiService {
           await _initPrefs();
           await _prefs?.remove(key);
         } catch (_) {
-          // Ignore prefs failure
         }
       }
     } else {
@@ -231,7 +228,6 @@ class ApiService {
           await _initPrefs();
           await _prefs?.clear();
         } catch (_) {
-          // Ignore prefs failure
         }
       }
     } else {

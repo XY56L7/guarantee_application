@@ -42,10 +42,6 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
       if (currentSeconds > 0) {
         final newRemainingSeconds = currentSeconds - 1;
         final newShowWarning = newRemainingSeconds <= 60;
-        
-        // Csak akkor frissítünk, ha a warning állapot változott, 
-        // vagy ha 10 másodpercenként van (a teljesítmény javítása érdekében)
-        // Az utolsó percben (60 másodperc) mindig frissítünk
         final shouldUpdate = newShowWarning != _showWarningNotifier.value || 
                             (newRemainingSeconds > 60 && newRemainingSeconds % 10 == 0) ||
                             newRemainingSeconds <= 60;
@@ -54,7 +50,6 @@ class _SessionTimeoutWidgetState extends State<SessionTimeoutWidget> {
           _remainingSecondsNotifier.value = newRemainingSeconds;
           _showWarningNotifier.value = newShowWarning;
         } else {
-          // Frissítjük a változókat értesítés nélkül (csak a belső állapot)
           _remainingSecondsNotifier.value = newRemainingSeconds;
         }
       } else {
