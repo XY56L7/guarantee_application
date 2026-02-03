@@ -42,7 +42,7 @@ export class UsersController {
   }
 
   @Get()
-  async getAllUsers(@Request() req): Promise<{ success: boolean; count: number; users: UserResponseDto[] }> {
+  async getAllUsers(@Request() _req): Promise<{ success: boolean; count: number; users: UserResponseDto[] }> {
     return {
       success: true,
       count: 0,
