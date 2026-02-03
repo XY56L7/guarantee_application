@@ -40,15 +40,15 @@ describe('AuthDomainService', () => {
     });
 
     it('should throw when email is missing', () => {
-      expect(() =>
-        service.validateUserData('', 'password123'),
-      ).toThrow('Email and password are required');
+      expect(() => service.validateUserData('', 'password123')).toThrow(
+        'Email and password are required',
+      );
     });
 
     it('should throw when password is missing', () => {
-      expect(() =>
-        service.validateUserData('user@example.com', ''),
-      ).toThrow('Email and password are required');
+      expect(() => service.validateUserData('user@example.com', '')).toThrow(
+        'Email and password are required',
+      );
     });
 
     it('should throw for invalid email format', () => {

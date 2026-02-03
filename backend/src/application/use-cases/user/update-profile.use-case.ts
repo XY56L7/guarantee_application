@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { UpdateProfileDto, UserResponseDto } from '../../dto/user.dto';
 import { IUserRepository } from '../../../domain/repositories/user.repository.interface';
 import { AuthDomainService } from '../../../domain/services/auth.domain.service';
@@ -12,7 +17,10 @@ export class UpdateProfileUseCase {
     private readonly authDomainService: AuthDomainService,
   ) {}
 
-  async execute(userId: number, dto: UpdateProfileDto): Promise<UserResponseDto> {
+  async execute(
+    userId: number,
+    dto: UpdateProfileDto,
+  ): Promise<UserResponseDto> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -26,7 +34,9 @@ export class UpdateProfileUseCase {
 
     if (dto.password) {
       if (!this.authDomainService.validatePassword(dto.password)) {
-        throw new BadRequestException('Password must be at least 6 characters long');
+        throw new BadRequestException(
+          'Password must be at least 6 characters long',
+        );
       }
       updates.password = await bcrypt.hash(dto.password, 10);
     }

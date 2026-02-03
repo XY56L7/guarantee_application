@@ -1,4 +1,8 @@
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 
@@ -11,13 +15,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
-    
+
     if (!authHeader) {
       throw new UnauthorizedException('Access denied. No token provided.');
     }
 
     const token = authHeader.split(' ')[1];
-    
+
     if (!token) {
       throw new UnauthorizedException('Access denied. No token provided.');
     }

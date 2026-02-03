@@ -10,17 +10,18 @@ export class GuaranteeCheckRepository implements IGuaranteeCheckRepository {
   async findAllByUserId(userId: number): Promise<GuaranteeCheck[]> {
     const checks = this.db.findGuaranteeChecksByUserId(userId);
     return checks.map(
-      (check) => new GuaranteeCheck(
-        check.id,
-        check.userId,
-        check.storeName,
-        check.productName,
-        check.purchaseDate,
-        check.expiryDate,
-        check.imagePath,
-        check.notes,
-        check.createdAt
-      )
+      (check) =>
+        new GuaranteeCheck(
+          check.id,
+          check.userId,
+          check.storeName,
+          check.productName,
+          check.purchaseDate,
+          check.expiryDate,
+          check.imagePath,
+          check.notes,
+          check.createdAt,
+        ),
     );
   }
 
@@ -36,7 +37,7 @@ export class GuaranteeCheckRepository implements IGuaranteeCheckRepository {
           checkData.expiryDate,
           checkData.imagePath,
           checkData.notes,
-          checkData.createdAt
+          checkData.createdAt,
         )
       : null;
   }
@@ -52,9 +53,7 @@ export class GuaranteeCheckRepository implements IGuaranteeCheckRepository {
     return null;
   }
 
-  async create(
-    checkData: Partial<GuaranteeCheck>,
-  ): Promise<GuaranteeCheck> {
+  async create(checkData: Partial<GuaranteeCheck>): Promise<GuaranteeCheck> {
     const newCheck = {
       id: this.db.getNextGuaranteeCheckId(),
       userId: checkData.userId!,
@@ -76,7 +75,7 @@ export class GuaranteeCheckRepository implements IGuaranteeCheckRepository {
       newCheck.expiryDate,
       newCheck.imagePath,
       newCheck.notes,
-      newCheck.createdAt
+      newCheck.createdAt,
     );
   }
 
@@ -95,7 +94,7 @@ export class GuaranteeCheckRepository implements IGuaranteeCheckRepository {
           updatedCheck.expiryDate,
           updatedCheck.imagePath,
           updatedCheck.notes,
-          updatedCheck.createdAt
+          updatedCheck.createdAt,
         )
       : null;
   }

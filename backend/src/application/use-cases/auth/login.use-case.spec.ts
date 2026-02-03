@@ -55,7 +55,10 @@ describe('LoginUseCase', () => {
     expect(result.token).toBe('jwt-token');
     expect(result.user.email).toBe('user@example.com');
     expect(userRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
-    expect(bcrypt.compare).toHaveBeenCalledWith('password123', mockUser.password);
+    expect(bcrypt.compare).toHaveBeenCalledWith(
+      'password123',
+      mockUser.password,
+    );
   });
 
   it('should throw UnauthorizedException when user not found', async () => {
@@ -68,7 +71,9 @@ describe('LoginUseCase', () => {
       }),
     ).rejects.toThrow(UnauthorizedException);
 
-    expect(userRepository.findByEmail).toHaveBeenCalledWith('unknown@example.com');
+    expect(userRepository.findByEmail).toHaveBeenCalledWith(
+      'unknown@example.com',
+    );
     expect(bcrypt.compare).not.toHaveBeenCalled();
   });
 
@@ -83,7 +88,10 @@ describe('LoginUseCase', () => {
       }),
     ).rejects.toThrow(UnauthorizedException);
 
-    expect(bcrypt.compare).toHaveBeenCalledWith('wrongpassword', mockUser.password);
+    expect(bcrypt.compare).toHaveBeenCalledWith(
+      'wrongpassword',
+      mockUser.password,
+    );
   });
 
   it('should throw when email/password validation fails', async () => {

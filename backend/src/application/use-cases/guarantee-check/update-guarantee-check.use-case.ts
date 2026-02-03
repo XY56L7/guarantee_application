@@ -33,7 +33,10 @@ export class UpdateGuaranteeCheckUseCase {
     if (dto.imagePath) updates.imagePath = dto.imagePath;
     if (dto.notes !== undefined) updates.notes = dto.notes;
 
-    const updatedCheck = await this.guaranteeCheckRepository.update(id, updates);
+    const updatedCheck = await this.guaranteeCheckRepository.update(
+      id,
+      updates,
+    );
     if (!updatedCheck) {
       throw new NotFoundException('Failed to update guarantee check');
     }

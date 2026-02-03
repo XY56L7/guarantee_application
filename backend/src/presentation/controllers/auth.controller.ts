@@ -1,11 +1,9 @@
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
-import { SignupDto, LoginDto, AuthResponseDto } from '../../application/dto/auth.dto';
+  SignupDto,
+  LoginDto,
+  AuthResponseDto,
+} from '../../application/dto/auth.dto';
 import { SignupUseCase } from '../../application/use-cases/auth/signup.use-case';
 import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
 import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';

@@ -16,13 +16,14 @@ async function bootstrap() {
       ];
 
       const localhostRegex = /^http:\/\/localhost:\d+$/;
-      
-      const isAllowed = allowedOrigins.some((allowed) => {
-        if (allowed instanceof RegExp) {
-          return allowed.test(origin);
-        }
-        return allowed === origin;
-      }) || localhostRegex.test(origin);
+
+      const isAllowed =
+        allowedOrigins.some((allowed) => {
+          if (allowed instanceof RegExp) {
+            return allowed.test(origin);
+          }
+          return allowed === origin;
+        }) || localhostRegex.test(origin);
 
       if (isAllowed) {
         callback(null, true);

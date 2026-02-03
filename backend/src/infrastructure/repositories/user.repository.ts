@@ -8,22 +8,43 @@ export class UserRepository implements IUserRepository {
   constructor(private readonly db: InMemoryDatabase) {}
 
   async findAll(): Promise<User[]> {
-    return this.db.getUsers().map((user) => 
-      new User(user.id, user.email, user.password, user.name, user.createdAt)
-    );
+    return this.db
+      .getUsers()
+      .map(
+        (user) =>
+          new User(
+            user.id,
+            user.email,
+            user.password,
+            user.name,
+            user.createdAt,
+          ),
+      );
   }
 
   async findById(id: number): Promise<User | null> {
     const userData = this.db.findUserById(id);
-    return userData 
-      ? new User(userData.id, userData.email, userData.password, userData.name, userData.createdAt)
+    return userData
+      ? new User(
+          userData.id,
+          userData.email,
+          userData.password,
+          userData.name,
+          userData.createdAt,
+        )
       : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const userData = this.db.findUserByEmail(email);
-    return userData 
-      ? new User(userData.id, userData.email, userData.password, userData.name, userData.createdAt)
+    return userData
+      ? new User(
+          userData.id,
+          userData.email,
+          userData.password,
+          userData.name,
+          userData.createdAt,
+        )
       : null;
   }
 
@@ -36,13 +57,25 @@ export class UserRepository implements IUserRepository {
       createdAt: new Date(),
     };
     this.db.addUser(newUser);
-    return new User(newUser.id, newUser.email, newUser.password, newUser.name, newUser.createdAt);
+    return new User(
+      newUser.id,
+      newUser.email,
+      newUser.password,
+      newUser.name,
+      newUser.createdAt,
+    );
   }
 
   async update(id: number, updates: Partial<User>): Promise<User | null> {
     const updatedUser = this.db.updateUser(id, updates);
-    return updatedUser 
-      ? new User(updatedUser.id, updatedUser.email, updatedUser.password, updatedUser.name, updatedUser.createdAt)
+    return updatedUser
+      ? new User(
+          updatedUser.id,
+          updatedUser.email,
+          updatedUser.password,
+          updatedUser.name,
+          updatedUser.createdAt,
+        )
       : null;
   }
 

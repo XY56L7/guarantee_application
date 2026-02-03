@@ -101,11 +101,7 @@ export class GuaranteeChecksController {
     message: string;
     check: GuaranteeCheckResponseDto;
   }> {
-    const check = await this.updateUseCase.execute(
-      req.user.userId,
-      id,
-      dto,
-    );
+    const check = await this.updateUseCase.execute(req.user.userId, id, dto);
     return {
       success: true,
       message: 'Guarantee check updated successfully',
