@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend:
-    name: Backend (test)
+    name: Backend
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -31,5 +31,37 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check format (Prettier)
+        run: npx prettier --check "src/**/*.ts" "**/*.spec.ts"
+
+      - name: Build
+        run: npm run build
+
       - name: Run tests
         run: npm test
+
+  frontend:
+    name: Frontend (Flutter)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend/guarantee_application
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
