@@ -13,7 +13,10 @@ export class LogoutUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(dto: LogoutDto, accessToken?: string): Promise<{
+  async execute(
+    dto: LogoutDto,
+    accessToken?: string,
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
@@ -29,8 +32,7 @@ export class LogoutUseCase {
           );
         }
       }
-    } catch (error) {
-    }
+    } catch (error) {}
 
     if (accessToken) {
       try {
@@ -42,8 +44,7 @@ export class LogoutUseCase {
             expiresAt,
           );
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     }
 
     if (refreshToken) {

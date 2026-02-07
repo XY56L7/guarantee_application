@@ -1,9 +1,6 @@
 import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import {
-  RefreshTokenDto,
-  RefreshTokenResponseDto,
-} from '../../dto/auth.dto';
+import { RefreshTokenDto, RefreshTokenResponseDto } from '../../dto/auth.dto';
 import { IRefreshTokenRepository } from '../../../domain/repositories/refresh-token.repository.interface';
 import { IUserRepository } from '../../../domain/repositories/user.repository.interface';
 import { TokenBlacklistService } from '../../../infrastructure/auth/token-blacklist.service';
@@ -53,7 +50,8 @@ export class RefreshTokenUseCase {
       throw new UnauthorizedException('User no longer exists');
     }
 
-    const accessTokenExpiry = this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m';
+    const accessTokenExpiry =
+      this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m';
 
     const newAccessToken = this.jwtService.sign(
       {

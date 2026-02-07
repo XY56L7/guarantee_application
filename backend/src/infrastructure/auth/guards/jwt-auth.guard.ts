@@ -24,12 +24,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const authHeader = request.headers['authorization'];
     const tokenFromCookie = request.cookies?.[ACCESS_TOKEN_COOKIE];
 
-    const token = tokenFromCookie || (authHeader ? authHeader.split(' ')[1] : null);
+    const token =
+      tokenFromCookie || (authHeader ? authHeader.split(' ')[1] : null);
 
     if (!token) {
       this.securityLogger.logTokenValidationFailure(
         '',
-        tokenFromCookie ? 'No token in cookie' : 'No authorization header or cookie',
+        tokenFromCookie
+          ? 'No token in cookie'
+          : 'No authorization header or cookie',
       );
       throw new UnauthorizedException('Access denied. No token provided.');
     }
@@ -42,18 +45,23 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     try {
       const decoded = this.jwtService.verify(token);
-      
+
       if (decoded.type !== 'access') {
-        this.securityLogger.logTokenValidationFailure(token, 'Invalid token type');
+        this.securityLogger.logTokenValidationFailure(
+          token,
+          'Invalid token type',
+        );
         throw new UnauthorizedException('Invalid token type.');
       }
-      
+
       request.user = decoded;
       return true;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         this.securityLogger.logTokenValidationFailure(token, 'Token expired');
-        throw new UnauthorizedException('Token expired. Please refresh your token.');
+        throw new UnauthorizedException(
+          'Token expired. Please refresh your token.',
+        );
       }
       this.securityLogger.logTokenValidationFailure(token, 'Invalid token');
       throw new UnauthorizedException('Invalid token.');

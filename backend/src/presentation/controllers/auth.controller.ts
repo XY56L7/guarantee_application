@@ -60,7 +60,8 @@ export class AuthController {
     @Body() dto: RefreshTokenDto,
     @Request() req: { cookies?: { [key: string]: string } },
   ): Promise<RefreshTokenResponseDto> {
-    const refreshToken = dto?.refreshToken || req.cookies?.[REFRESH_TOKEN_COOKIE];
+    const refreshToken =
+      dto?.refreshToken || req.cookies?.[REFRESH_TOKEN_COOKIE];
     if (!refreshToken) {
       throw new UnauthorizedException(
         'Refresh token required (cookie or body)',
@@ -77,7 +78,8 @@ export class AuthController {
     @Request() req: { cookies?: { [key: string]: string } },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const accessToken = auth?.split(' ')[1] ?? req.cookies?.[ACCESS_TOKEN_COOKIE];
+    const accessToken =
+      auth?.split(' ')[1] ?? req.cookies?.[ACCESS_TOKEN_COOKIE];
     const refreshToken =
       dto?.refreshToken ?? req.cookies?.[REFRESH_TOKEN_COOKIE] ?? '';
     const result = await this.logoutUseCase.execute(

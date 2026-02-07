@@ -18,10 +18,7 @@ const REFRESH_MAX_AGE = 7 * 24 * 60 * 60;
 export class AuthCookieInterceptor implements NestInterceptor {
   constructor(private readonly configService: ConfigService) {}
 
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<unknown> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const response = context.switchToHttp().getResponse<Response>();
     const isProduction =
       this.configService.get<string>('NODE_ENV') === 'production';

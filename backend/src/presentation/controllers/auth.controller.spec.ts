@@ -19,7 +19,10 @@ describe('AuthController', () => {
       providers: [
         { provide: SignupUseCase, useValue: signupUseCase },
         { provide: LoginUseCase, useValue: loginUseCase },
-        { provide: JwtService, useValue: { verify: jest.fn(), sign: jest.fn() } },
+        {
+          provide: JwtService,
+          useValue: { verify: jest.fn(), sign: jest.fn() },
+        },
         { provide: SecurityLogger, useValue: new SecurityLogger() },
       ],
     }).compile();

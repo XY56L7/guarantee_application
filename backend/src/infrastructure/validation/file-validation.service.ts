@@ -9,14 +9,21 @@ export class FileValidationService {
     'image/png',
     'image/webp',
   ];
-  private readonly ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
+  private readonly ALLOWED_IMAGE_EXTENSIONS = [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.webp',
+  ];
 
   validateImagePath(imagePath: string): void {
     if (!imagePath || typeof imagePath !== 'string') {
       throw new BadRequestException('Image path is required');
     }
 
-    const extension = imagePath.toLowerCase().substring(imagePath.lastIndexOf('.'));
+    const extension = imagePath
+      .toLowerCase()
+      .substring(imagePath.lastIndexOf('.'));
     if (!this.ALLOWED_IMAGE_EXTENSIONS.includes(extension)) {
       throw new BadRequestException(
         `Invalid image type. Allowed types: ${this.ALLOWED_IMAGE_EXTENSIONS.join(', ')}`,

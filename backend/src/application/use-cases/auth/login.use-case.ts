@@ -51,8 +51,10 @@ export class LoginUseCase {
     this.db.resetFailedLoginAttempts(dto.email);
     this.securityLogger.logSuccessfulLogin(dto.email);
 
-    const accessTokenExpiry = this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m';
-    const refreshTokenExpiry = this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d';
+    const accessTokenExpiry =
+      this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m';
+    const refreshTokenExpiry =
+      this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d';
 
     const accessToken = this.jwtService.sign(
       {

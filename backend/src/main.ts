@@ -32,7 +32,9 @@ function validateJwtSecret(jwtSecret: string | undefined): void {
   const hasUpperCase = /[A-Z]/.test(jwtSecret);
   const hasLowerCase = /[a-z]/.test(jwtSecret);
   const hasNumber = /[0-9]/.test(jwtSecret);
-  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(jwtSecret);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+    jwtSecret,
+  );
 
   if (!(hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar)) {
     console.warn(
@@ -76,13 +78,16 @@ async function bootstrap() {
     }
     next();
   });
-  const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:8080';
+  const frontendUrl =
+    configService.get<string>('FRONTEND_URL') || 'http://localhost:8080';
 
   app.enableCors({
     origin: function (origin, callback) {
       if (!origin) {
         if (isProduction) {
-          return callback(new Error('CORS: Origin header required in production'));
+          return callback(
+            new Error('CORS: Origin header required in production'),
+          );
         }
         return callback(null, true);
       }
@@ -92,7 +97,9 @@ async function bootstrap() {
         if (allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
-          callback(new Error(`CORS: Origin ${origin} not allowed in production`));
+          callback(
+            new Error(`CORS: Origin ${origin} not allowed in production`),
+          );
         }
       } else {
         const allowedOrigins: (string | RegExp)[] = [

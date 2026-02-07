@@ -36,8 +36,10 @@ export class SignupUseCase {
       name: dto.name,
     } as any);
 
-    const accessTokenExpiry = this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m';
-    const refreshTokenExpiry = this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d';
+    const accessTokenExpiry =
+      this.configService.get<string>('JWT_ACCESS_EXPIRY') || '15m';
+    const refreshTokenExpiry =
+      this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d';
 
     const accessToken = this.jwtService.sign(
       {
