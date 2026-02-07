@@ -1,9 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { SignupUseCase } from '../../application/use-cases/auth/signup.use-case';
 import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
+import { RefreshTokenUseCase } from '../../application/use-cases/auth/refresh-token.use-case';
+import { LogoutUseCase } from '../../application/use-cases/auth/logout.use-case';
 import { SecurityLogger } from '../../infrastructure/logging/security.logger';
+import { TokenBlacklistService } from '../../infrastructure/auth/token-blacklist.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -19,11 +23,21 @@ describe('AuthController', () => {
       providers: [
         { provide: SignupUseCase, useValue: signupUseCase },
         { provide: LoginUseCase, useValue: loginUseCase },
+        { provide: RefreshTokenUseCase, useValue: { execute: jest.fn() } },
+        { provide: LogoutUseCase, useValue: { execute: jest.fn() } },
         {
           provide: JwtService,
           useValue: { verify: jest.fn(), sign: jest.fn() },
         },
         { provide: SecurityLogger, useValue: new SecurityLogger() },
+        {
+          provide: TokenBlacklistService,
+          useValue: { isBlacklisted: jest.fn().mockResolvedValue(false) },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn((key: string) => (key === 'NODE_ENV' ? 'test' : undefined)) },
+        },
       ],
     }).compile();
 

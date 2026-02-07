@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { LoginUseCase } from './login.use-case';
 import { AuthDomainService } from '../../../domain/services/auth.domain.service';
@@ -36,9 +37,17 @@ describe('LoginUseCase', () => {
         LoginUseCase,
         AuthDomainService,
         { provide: 'IUserRepository', useValue: userRepository },
+        {
+          provide: 'IRefreshTokenRepository',
+          useValue: { create: jest.fn().mockResolvedValue(undefined) },
+        },
         { provide: JwtService, useValue: jwtService },
         { provide: InMemoryDatabase, useValue: db },
         { provide: SecurityLogger, useValue: securityLogger },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn((key: string) => (key === 'JWT_ACCESS_EXPIRY' ? '15m' : key === 'JWT_REFRESH_EXPIRY' ? '7d' : undefined)) },
+        },
       ],
     }).compile();
 
