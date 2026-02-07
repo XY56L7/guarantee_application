@@ -109,7 +109,7 @@ flutter analyze
 flutter test
 ```
 
-### Checklist
+### Checklist before making a commit or a PR
 
 - [ ] Backend: `npm run lint` passes
 - [ ] Backend: `npx prettier --check "src/**/*.ts" "**/*.spec.ts"` passes (or no diff after `npm run format`)
