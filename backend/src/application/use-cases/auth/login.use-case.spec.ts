@@ -46,7 +46,15 @@ describe('LoginUseCase', () => {
         { provide: SecurityLogger, useValue: securityLogger },
         {
           provide: ConfigService,
-          useValue: { get: jest.fn((key: string) => (key === 'JWT_ACCESS_EXPIRY' ? '15m' : key === 'JWT_REFRESH_EXPIRY' ? '7d' : undefined)) },
+          useValue: {
+            get: jest.fn((key: string) =>
+              key === 'JWT_ACCESS_EXPIRY'
+                ? '15m'
+                : key === 'JWT_REFRESH_EXPIRY'
+                  ? '7d'
+                  : undefined,
+            ),
+          },
         },
       ],
     }).compile();

@@ -36,7 +36,11 @@ describe('AuthController', () => {
         },
         {
           provide: ConfigService,
-          useValue: { get: jest.fn((key: string) => (key === 'NODE_ENV' ? 'test' : undefined)) },
+          useValue: {
+            get: jest.fn((key: string) =>
+              key === 'NODE_ENV' ? 'test' : undefined,
+            ),
+          },
         },
       ],
     }).compile();
