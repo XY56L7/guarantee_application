@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-interface BlacklistedToken {
-  token: string;
-  expiresAt: Date;
-}
-
 @Injectable()
 export class TokenBlacklistService {
   private blacklist: Map<string, Date> = new Map();

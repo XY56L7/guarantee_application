@@ -43,7 +43,7 @@ import { PassportModule } from '@nestjs/passport';
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: (_configService: ConfigService) => ({
         throttlers: [
           {
             ttl: 60000,

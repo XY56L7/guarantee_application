@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'http_client_stub.dart' if (dart.library.html) 'http_client_web.dart' as http_client;
 import 'web_storage_stub.dart' if (dart.library.html) 'web_storage.dart';
 
 class ApiService {
   static const storage = FlutterSecureStorage();
-  static SharedPreferences? _prefs;
   static final WebStorage _webStorage = WebStorage();
 
   static http.Client? _client;
@@ -32,17 +30,6 @@ class ApiService {
   static const _webUserEmailKey = 'user_email';
   static const _webUserNameKey = 'user_name';
   static const _webUserIdKey = 'user_id';
-
-  static Future<void> _initPrefs() async {
-    if (kIsWeb) {
-      if (_prefs == null) {
-        try {
-          _prefs = await SharedPreferences.getInstance();
-        } catch (_) {
-        }
-      }
-    }
-  }
 
   static Future<bool> _writeToken(String key, String value) async {
     if (kIsWeb) {
@@ -281,6 +268,10 @@ class ApiService {
       );
     } catch (_) {
     }
-    await storage.deleteAll();
+    await _deleteToken('jwt_token');
+    await _deleteToken('refresh_token');
+    await _deleteToken('user_email');
+    await _deleteToken('user_name');
+    await _deleteToken('user_id');
   }
 }

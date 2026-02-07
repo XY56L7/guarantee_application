@@ -32,7 +32,7 @@ export class LogoutUseCase {
           );
         }
       }
-    } catch (error) {}
+    } catch {}
 
     if (accessToken) {
       try {
@@ -44,7 +44,7 @@ export class LogoutUseCase {
             expiresAt,
           );
         }
-      } catch (error) {}
+      } catch {}
     }
 
     if (refreshToken) {
