@@ -21,7 +21,7 @@
     "@nestjs/core": "^11.1.12",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.1.12",
+    "@nestjs/platform-express": "^11.1.13",
     "@nestjs/throttler": "^6.5.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/csurf": "^1.11.5",
