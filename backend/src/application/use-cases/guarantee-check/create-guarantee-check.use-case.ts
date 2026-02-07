@@ -4,12 +4,14 @@ import {
   GuaranteeCheckResponseDto,
 } from '../../dto/guarantee-check.dto';
 import { IGuaranteeCheckRepository } from '../../../domain/repositories/guarantee-check.repository.interface';
+import { FileValidationService } from '../../../infrastructure/validation/file-validation.service';
 
 @Injectable()
 export class CreateGuaranteeCheckUseCase {
   constructor(
     @Inject('IGuaranteeCheckRepository')
     private readonly guaranteeCheckRepository: IGuaranteeCheckRepository,
+    private readonly fileValidationService: FileValidationService,
   ) {}
 
   async execute(
@@ -27,6 +29,8 @@ export class CreateGuaranteeCheckUseCase {
         'Store name, product name, purchase date, expiry date, and image path are required',
       );
     }
+
+    this.fileValidationService.validateImagePath(dto.imagePath);
 
     const check = await this.guaranteeCheckRepository.create({
       userId,

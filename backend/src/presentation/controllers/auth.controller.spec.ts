@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { SignupUseCase } from '../../application/use-cases/auth/signup.use-case';
 import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
+import { SecurityLogger } from '../../infrastructure/logging/security.logger';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -17,6 +19,8 @@ describe('AuthController', () => {
       providers: [
         { provide: SignupUseCase, useValue: signupUseCase },
         { provide: LoginUseCase, useValue: loginUseCase },
+        { provide: JwtService, useValue: { verify: jest.fn(), sign: jest.fn() } },
+        { provide: SecurityLogger, useValue: new SecurityLogger() },
       ],
     }).compile();
 
@@ -32,7 +36,7 @@ describe('AuthController', () => {
     it('should call signup use case and return result', async () => {
       const dto = {
         email: 'user@example.com',
-        password: 'password123',
+        password: 'Password123!',
         name: 'Test User',
       };
       const expected = { success: true, user: {}, token: 'token' };
@@ -47,7 +51,7 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should call login use case and return result', async () => {
-      const dto = { email: 'user@example.com', password: 'password123' };
+      const dto = { email: 'user@example.com', password: 'Password123!' };
       const expected = { success: true, user: {}, token: 'token' };
       loginUseCase.execute.mockResolvedValue(expected);
 

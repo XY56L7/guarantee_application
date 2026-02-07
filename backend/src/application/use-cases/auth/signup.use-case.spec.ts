@@ -49,17 +49,17 @@ describe('SignupUseCase', () => {
   it('should create user and return token', async () => {
     const dto = {
       email: 'user@example.com',
-      password: 'password123',
+      password: 'Password123!',
       name: 'Test User',
     };
 
     const result = await signupUseCase.execute(dto);
 
     expect(result.success).toBe(true);
-    expect(result.token).toBe('jwt-token');
+    expect(result.accessToken).toBe('jwt-token');
     expect(result.user.email).toBe('user@example.com');
     expect(userRepository.exists).toHaveBeenCalledWith('user@example.com');
-    expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
+    expect(bcrypt.hash).toHaveBeenCalledWith('Password123!', 10);
     expect(userRepository.create).toHaveBeenCalledWith({
       email: 'user@example.com',
       password: 'hashed-password',
@@ -73,7 +73,7 @@ describe('SignupUseCase', () => {
     await expect(
       signupUseCase.execute({
         email: 'existing@example.com',
-        password: 'password123',
+        password: 'Password123!',
         name: 'User',
       }),
     ).rejects.toThrow(ConflictException);

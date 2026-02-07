@@ -5,6 +5,8 @@ import * as bcrypt from 'bcrypt';
 import { LoginUseCase } from './login.use-case';
 import { AuthDomainService } from '../../../domain/services/auth.domain.service';
 import { User } from '../../../domain/entities/user.entity';
+import { InMemoryDatabase } from '../../../persistence/database/in-memory.database';
+import { SecurityLogger } from '../../../infrastructure/logging/security.logger';
 
 jest.mock('bcrypt');
 
@@ -12,6 +14,8 @@ describe('LoginUseCase', () => {
   let loginUseCase: LoginUseCase;
   let userRepository: { findByEmail: jest.Mock };
   let jwtService: { sign: jest.Mock };
+  let db: InMemoryDatabase;
+  let securityLogger: SecurityLogger;
 
   const mockUser = new User(
     1,
@@ -24,6 +28,8 @@ describe('LoginUseCase', () => {
   beforeEach(async () => {
     userRepository = { findByEmail: jest.fn() };
     jwtService = { sign: jest.fn().mockReturnValue('jwt-token') };
+    db = new InMemoryDatabase();
+    securityLogger = new SecurityLogger();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -31,6 +37,8 @@ describe('LoginUseCase', () => {
         AuthDomainService,
         { provide: 'IUserRepository', useValue: userRepository },
         { provide: JwtService, useValue: jwtService },
+        { provide: InMemoryDatabase, useValue: db },
+        { provide: SecurityLogger, useValue: securityLogger },
       ],
     }).compile();
 
@@ -48,15 +56,15 @@ describe('LoginUseCase', () => {
 
     const result = await loginUseCase.execute({
       email: 'user@example.com',
-      password: 'password123',
+      password: 'Password123!',
     });
 
     expect(result.success).toBe(true);
-    expect(result.token).toBe('jwt-token');
+    expect(result.accessToken).toBe('jwt-token');
     expect(result.user.email).toBe('user@example.com');
     expect(userRepository.findByEmail).toHaveBeenCalledWith('user@example.com');
     expect(bcrypt.compare).toHaveBeenCalledWith(
-      'password123',
+      'Password123!',
       mockUser.password,
     );
   });
@@ -67,7 +75,7 @@ describe('LoginUseCase', () => {
     await expect(
       loginUseCase.execute({
         email: 'unknown@example.com',
-        password: 'password123',
+        password: 'Password123!',
       }),
     ).rejects.toThrow(UnauthorizedException);
 
@@ -84,12 +92,12 @@ describe('LoginUseCase', () => {
     await expect(
       loginUseCase.execute({
         email: 'user@example.com',
-        password: 'wrongpassword',
+        password: 'WrongPass123!',
       }),
     ).rejects.toThrow(UnauthorizedException);
 
     expect(bcrypt.compare).toHaveBeenCalledWith(
-      'wrongpassword',
+      'WrongPass123!',
       mockUser.password,
     );
   });
@@ -98,7 +106,7 @@ describe('LoginUseCase', () => {
     await expect(
       loginUseCase.execute({
         email: '',
-        password: 'password123',
+        password: 'Password123!',
       }),
     ).rejects.toThrow('Email and password are required');
 

@@ -6,6 +6,8 @@ interface UserData {
   password: string;
   name: string;
   createdAt: Date;
+  failedLoginAttempts?: number;
+  lockedUntil?: Date;
 }
 
 interface GuaranteeCheckData {
@@ -20,10 +22,20 @@ interface GuaranteeCheckData {
   createdAt: Date;
 }
 
+interface RefreshTokenData {
+  id: number;
+  userId: number;
+  token: string;
+  expiresAt: Date;
+  createdAt: Date;
+  isRevoked: boolean;
+}
+
 @Injectable()
 export class InMemoryDatabase {
   private users: UserData[] = [];
   private guaranteeChecks: GuaranteeCheckData[] = [];
+  private refreshTokens: RefreshTokenData[] = [];
 
   getUsers(): UserData[] {
     return this.users;
@@ -60,6 +72,44 @@ export class InMemoryDatabase {
     return this.users.length > 0
       ? Math.max(...this.users.map((u) => u.id)) + 1
       : 1;
+  }
+
+  incrementFailedLoginAttempts(email: string): void {
+    const user = this.findUserByEmail(email);
+    if (user) {
+      const index = this.users.findIndex((u) => u.id === user.id);
+      if (index !== -1) {
+        this.users[index].failedLoginAttempts =
+          (this.users[index].failedLoginAttempts || 0) + 1;
+        if (this.users[index].failedLoginAttempts! >= 5) {
+          const lockDuration = 15 * 60 * 1000;
+          this.users[index].lockedUntil = new Date(Date.now() + lockDuration);
+        }
+      }
+    }
+  }
+
+  resetFailedLoginAttempts(email: string): void {
+    const user = this.findUserByEmail(email);
+    if (user) {
+      const index = this.users.findIndex((u) => u.id === user.id);
+      if (index !== -1) {
+        this.users[index].failedLoginAttempts = 0;
+        this.users[index].lockedUntil = undefined;
+      }
+    }
+  }
+
+  isAccountLocked(email: string): boolean {
+    const user = this.findUserByEmail(email);
+    if (!user || !user.lockedUntil) {
+      return false;
+    }
+    if (user.lockedUntil > new Date()) {
+      return true;
+    }
+    this.resetFailedLoginAttempts(email);
+    return false;
   }
 
   getGuaranteeChecks(): GuaranteeCheckData[] {
@@ -110,5 +160,50 @@ export class InMemoryDatabase {
     return this.guaranteeChecks.length > 0
       ? Math.max(...this.guaranteeChecks.map((c) => c.id)) + 1
       : 1;
+  }
+
+  addRefreshToken(token: RefreshTokenData): void {
+    this.refreshTokens.push(token);
+  }
+
+  getNextRefreshTokenId(): number {
+    return this.refreshTokens.length > 0
+      ? Math.max(...this.refreshTokens.map((t) => t.id)) + 1
+      : 1;
+  }
+
+  findRefreshTokenByToken(token: string): RefreshTokenData | undefined {
+    return this.refreshTokens.find((t) => t.token === token);
+  }
+
+  findRefreshTokensByUserId(userId: number): RefreshTokenData[] {
+    return this.refreshTokens.filter((t) => t.userId === userId);
+  }
+
+  revokeRefreshToken(token: string): boolean {
+    const index = this.refreshTokens.findIndex((t) => t.token === token);
+    if (index !== -1) {
+      this.refreshTokens[index].isRevoked = true;
+      return true;
+    }
+    return false;
+  }
+
+  revokeAllUserRefreshTokens(userId: number): number {
+    let count = 0;
+    this.refreshTokens.forEach((t) => {
+      if (t.userId === userId && !t.isRevoked) {
+        t.isRevoked = true;
+        count++;
+      }
+    });
+    return count;
+  }
+
+  deleteExpiredRefreshTokens(): number {
+    const now = new Date();
+    const initialLength = this.refreshTokens.length;
+    this.refreshTokens = this.refreshTokens.filter((t) => t.expiresAt > now);
+    return initialLength - this.refreshTokens.length;
   }
 }

@@ -21,13 +21,33 @@ describe('AuthDomainService', () => {
   });
 
   describe('validatePassword', () => {
-    it('should return true for password with 6+ characters', () => {
-      expect(service.validatePassword('123456')).toBe(true);
-      expect(service.validatePassword('password')).toBe(true);
+    it('should return true for password with 8+ characters and complexity', () => {
+      expect(service.validatePassword('Password123!')).toBe(true);
+      expect(service.validatePassword('SecurePass1@')).toBe(true);
     });
 
-    it('should return false for short or empty password', () => {
+    it('should return false for short password', () => {
       expect(service.validatePassword('12345')).toBe(false);
+      expect(service.validatePassword('Pass1!')).toBe(false);
+    });
+
+    it('should return false for password without uppercase', () => {
+      expect(service.validatePassword('password123!')).toBe(false);
+    });
+
+    it('should return false for password without lowercase', () => {
+      expect(service.validatePassword('PASSWORD123!')).toBe(false);
+    });
+
+    it('should return false for password without numbers', () => {
+      expect(service.validatePassword('Password!')).toBe(false);
+    });
+
+    it('should return false for password without special characters', () => {
+      expect(service.validatePassword('Password123')).toBe(false);
+    });
+
+    it('should return false for empty password', () => {
       expect(service.validatePassword('')).toBeFalsy();
     });
   });
@@ -35,12 +55,12 @@ describe('AuthDomainService', () => {
   describe('validateUserData', () => {
     it('should not throw for valid email and password', () => {
       expect(() =>
-        service.validateUserData('user@example.com', 'password123'),
+        service.validateUserData('user@example.com', 'Password123!'),
       ).not.toThrow();
     });
 
     it('should throw when email is missing', () => {
-      expect(() => service.validateUserData('', 'password123')).toThrow(
+      expect(() => service.validateUserData('', 'Password123!')).toThrow(
         'Email and password are required',
       );
     });
@@ -53,25 +73,27 @@ describe('AuthDomainService', () => {
 
     it('should throw for invalid email format', () => {
       expect(() =>
-        service.validateUserData('invalid-email', 'password123'),
+        service.validateUserData('invalid-email', 'Password123!'),
       ).toThrow('Invalid email format');
     });
 
     it('should throw for short password', () => {
       expect(() =>
         service.validateUserData('user@example.com', '12345'),
-      ).toThrow('Password must be at least 6 characters long');
+      ).toThrow(
+        'Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters',
+      );
     });
 
     it('should throw when name is provided but empty (whitespace)', () => {
       expect(() =>
-        service.validateUserData('user@example.com', 'password123', '   '),
+        service.validateUserData('user@example.com', 'Password123!', '   '),
       ).toThrow('Name cannot be empty');
     });
 
     it('should not throw when name is valid', () => {
       expect(() =>
-        service.validateUserData('user@example.com', 'password123', 'John'),
+        service.validateUserData('user@example.com', 'Password123!', 'John'),
       ).not.toThrow();
     });
   });

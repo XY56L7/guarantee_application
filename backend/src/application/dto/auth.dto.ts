@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class SignupDto {
   @IsEmail()
@@ -34,5 +34,25 @@ export class AuthResponseDto {
     name: string;
     createdAt: Date;
   };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+
+export class RefreshTokenDto {
+  @IsOptional()
+  @IsString()
+  refreshToken?: string;
+}
+
+export class RefreshTokenResponseDto {
+  success: boolean;
+  accessToken: string;
+  expiresIn: number;
+}
+
+export class LogoutDto {
+  @IsOptional()
+  @IsString()
+  refreshToken?: string;
 }

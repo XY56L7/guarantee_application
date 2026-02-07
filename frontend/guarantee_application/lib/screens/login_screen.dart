@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guarantee_application/services/api_service.dart';
+import 'package:guarantee_application/utils/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -117,15 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
+                    validator: Validators.validateEmail,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -146,15 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
+                    validator: Validators.validatePassword,
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
@@ -205,9 +190,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  _buildDummyAccount('user@example.com', 'password123'),
-                  _buildDummyAccount('admin@example.com', 'admin123'),
-                  _buildDummyAccount('demo@example.com', 'demo123'),
+                  _buildDummyAccount('user@example.com', 'User1234!'),
+                  _buildDummyAccount('admin@example.com', 'Admin1234!'),
+                  _buildDummyAccount('demo@example.com', 'Demo1234!'),
                 ],
               ),
             ),

@@ -8,7 +8,14 @@ export class AuthDomainService {
   }
 
   validatePassword(password: string): boolean {
-    return password && password.length >= 6;
+    if (!password || password.length < 8) {
+      return false;
+    }
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+    return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
   }
 
   validateUserData(email: string, password: string, name?: string): void {
@@ -25,7 +32,9 @@ export class AuthDomainService {
     }
 
     if (!this.validatePassword(password)) {
-      throw new Error('Password must be at least 6 characters long');
+      throw new Error(
+        'Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters',
+      );
     }
   }
 }
