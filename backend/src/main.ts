@@ -92,48 +92,36 @@ async function bootstrap() {
     }
   }
 
+  // Handle preflight OPTIONS early so CORS headers are always sent (helps on Vercel serverless)
+  app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      const origin = req.headers.origin as string | undefined;
+      const allow =
+        origin &&
+        (isProduction
+          ? originAllowed(origin)
+          : /^https?:\/\/(localhost|10\.0\.2\.2)(:\d+)?$/.test(origin));
+      if (allow && origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+      }
+      res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET,POST,PUT,DELETE,OPTIONS',
+      );
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization',
+      );
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Max-Age', '86400');
+      return res.status(204).end();
+    }
+    next();
+  });
+
+  // Static origin in production so CORS headers are set reliably; dynamic in development
   app.enableCors({
-    origin: function (origin, callback) {
-      if (!origin) {
-        if (isProduction) {
-          return callback(
-            new Error('CORS: Origin header required in production'),
-          );
-        }
-        return callback(null, true);
-      }
-
-      if (isProduction) {
-        if (originAllowed(origin)) {
-          callback(null, true);
-        } else {
-          callback(
-            new Error(`CORS: Origin ${origin} not allowed in production`),
-          );
-        }
-      } else {
-        const allowedOrigins: (string | RegExp)[] = [
-          'http://localhost:3000',
-          'http://localhost:8080',
-          'http://10.0.2.2:3000',
-        ];
-        const localhostRegex = /^http:\/\/localhost:\d+$/;
-
-        const isAllowed =
-          allowedOrigins.some((allowed) => {
-            if (allowed instanceof RegExp) {
-              return allowed.test(origin);
-            }
-            return allowed === origin;
-          }) || localhostRegex.test(origin);
-
-        if (isAllowed) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      }
-    },
+    origin: isProduction ? frontendUrl : true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
