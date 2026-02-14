@@ -19,7 +19,10 @@ flutter pub get
 
 DART_DEFINES=""
 if [ -n "$API_BASE_URL" ]; then
+  echo "Using API_BASE_URL for build (length ${#API_BASE_URL} chars)"
   DART_DEFINES="--dart-define=API_BASE_URL=$API_BASE_URL"
+else
+  echo "WARNING: API_BASE_URL not set - app will use default (localhost:3000)"
 fi
 flutter build web $DART_DEFINES
 
