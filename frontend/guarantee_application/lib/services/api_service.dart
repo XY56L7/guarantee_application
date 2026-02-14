@@ -16,9 +16,13 @@ class ApiService {
     return _client!;
   }
 
+
   static String get baseUrl {
     if (kIsWeb) {
-      return 'http://localhost:3000/api';
+      return const String.fromEnvironment(
+        'API_BASE_URL',
+        defaultValue: 'http://localhost:3000/api',
+      );
     } else if (Platform.isAndroid) {
       return 'http://10.0.2.2:3000/api';
     } else {
