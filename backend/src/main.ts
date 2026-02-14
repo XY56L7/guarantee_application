@@ -82,6 +82,16 @@ async function bootstrap() {
     configService.get<string>('FRONTEND_URL') || 'http://localhost:8080';
   const frontendUrl = frontendUrlRaw.replace(/\/+$/, '');
 
+  function originAllowed(origin: string): boolean {
+    try {
+      const allowedHost = new URL(frontendUrl).hostname.toLowerCase();
+      const originHost = new URL(origin).hostname.toLowerCase();
+      return originHost === allowedHost;
+    } catch {
+      return false;
+    }
+  }
+
   app.enableCors({
     origin: function (origin, callback) {
       if (!origin) {
@@ -94,11 +104,7 @@ async function bootstrap() {
       }
 
       if (isProduction) {
-        const allowedOrigins = [
-          frontendUrl,
-          frontendUrl + '/',
-        ].filter((o, i, a) => a.indexOf(o) === i);
-        if (allowedOrigins.includes(origin)) {
+        if (originAllowed(origin)) {
           callback(null, true);
         } else {
           callback(
