@@ -1,0 +1,1 @@
+# Kept so Vercel finds an output directory. API routes are handled by the NestJS serverless function.
