@@ -78,8 +78,9 @@ async function bootstrap() {
     }
     next();
   });
-  const frontendUrl =
+  const frontendUrlRaw =
     configService.get<string>('FRONTEND_URL') || 'http://localhost:8080';
+  const frontendUrl = frontendUrlRaw.replace(/\/+$/, '');
 
   app.enableCors({
     origin: function (origin, callback) {
@@ -93,7 +94,10 @@ async function bootstrap() {
       }
 
       if (isProduction) {
-        const allowedOrigins = [frontendUrl];
+        const allowedOrigins = [
+          frontendUrl,
+          frontendUrl + '/',
+        ].filter((o, i, a) => a.indexOf(o) === i);
         if (allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
