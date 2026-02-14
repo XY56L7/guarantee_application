@@ -83,15 +83,18 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> login(String email, String password) async {
+    final url = '$baseUrl/auth/login';
+    debugPrint('[ApiService] login: POST $url (baseUrl=$baseUrl)');
     try {
       final response = await _httpClient.post(
-        Uri.parse('$baseUrl/auth/login'),
+        Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
           'password': password,
         }),
       );
+      debugPrint('[ApiService] login: status=${response.statusCode}');
 
       final data = jsonDecode(response.body) as Map<String, dynamic>;
 
@@ -122,7 +125,9 @@ class ApiService {
         }
       }
       return data;
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('[ApiService] login failed: $e');
+      debugPrint('[ApiService] stack: $stack');
       return {
         'success': false,
         'message': 'Network error: ${e.toString()}',

@@ -51,6 +51,15 @@ async function bootstrap() {
 
   validateJwtSecret(jwtSecret);
 
+  // Request logging (see Vercel Function logs to confirm requests reach the app)
+  app.use((req, res, next) => {
+    const ts = new Date().toISOString();
+    console.log(
+      `[${ts}] ${req.method} ${req.url} | origin=${req.headers.origin ?? '(none)'}`,
+    );
+    next();
+  });
+
   app.use(cookieParser());
 
   app.use(helmet());
