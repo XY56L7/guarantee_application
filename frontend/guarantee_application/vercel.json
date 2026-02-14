@@ -1,0 +1,6 @@
+{
+  "buildCommand": "bash scripts/install_flutter.sh",
+  "outputDirectory": "build/web",
+  "framework": null,
+  "installCommand": "true"
+}
