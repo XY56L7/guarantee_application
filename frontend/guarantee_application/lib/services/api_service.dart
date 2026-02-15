@@ -126,11 +126,19 @@ class ApiService {
       }
       return data;
     } catch (e, stack) {
+      final msg = e.toString();
       debugPrint('[ApiService] login failed: $e');
       debugPrint('[ApiService] stack: $stack');
+      if (kIsWeb && (msg.contains('Failed to fetch') || msg.contains('CORS') || msg.contains('NetworkError'))) {
+        debugPrint('[ApiService] Likely CORS/preflight: API returned non-2xx for OPTIONS or no CORS headers. Backend may not be receiving requests (check Vercel Function Invocations). See DEPLOY-RAILWAY.md to host API elsewhere.');
+      }
+      String userMessage = 'Network error: ${e.toString()}';
+      if (kIsWeb && msg.contains('Failed to fetch')) {
+        userMessage = 'Cannot reach the API. If this persists, the server may be down or CORS may be blocking the request.';
+      }
       return {
         'success': false,
-        'message': 'Network error: ${e.toString()}',
+        'message': userMessage,
       };
     }
   }
